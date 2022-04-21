@@ -117,7 +117,6 @@ def post_edit(request, post_id):
     groups = Group.objects.all()
     post = get_object_or_404(Post, pk=post_id)
     template_name = 'posts/create_post.html'
-    form = PostForm(request.POST, instance=post)
     is_edit = True
     if post.author != request.user:
         return redirect('posts:profile', post.author)
@@ -135,14 +134,13 @@ def post_edit(request, post_id):
     }
     if not form.is_valid():
         return render(request, template_name, context)
-    post.save()
+    form.save()
     return redirect('posts:post_detail', post.pk)
 
 
 @login_required
 def add_comment(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-
     form = CommentForm(request.POST or None)
     if form.is_valid():
         comment = form.save(commit=False)
@@ -150,10 +148,7 @@ def add_comment(request, post_id):
         comment.post = post
         comment.save()
         return redirect('posts:post_detail', post_id=post_id)
-    context = {
-        'form': form,
-    }
-    return render(request, 'posts:post_detail', context)
+    return render(request, 'posts:post_detail', {'form': form})
 
 
 @login_required
@@ -172,10 +167,10 @@ def follow_index(request):
 @login_required
 def profile_follow(request, username):
     if request.user != User.objects.get(username=username):
-        if Follow.objects.filter(
+        if not Follow.objects.filter(
             user=request.user,
             author=User.objects.get(username=username)
-        ).count() < 1:
+        ).exists():
             Follow.objects.create(
                 user=request.user,
                 author=User.objects.get(username=username)

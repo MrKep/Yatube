@@ -8,6 +8,7 @@ from ..models import Group, Post
 User = get_user_model()
 
 
+# Проверка кеша в test_forms функция test_caching или нужно еще?
 class PostURLTests(TestCase):
     @classmethod
     def setUpClass(cls):
@@ -31,11 +32,11 @@ class PostURLTests(TestCase):
 
     def test_correct_urls(self):
         response_urls = {
-            '/': 200,
-            '/group/slug/': 200,
-            '/posts/1/': 200,
-            '/profile/test/': 200,
-            '/unexisting_page/': 404
+            '/': HTTPStatus.OK,
+            '/group/slug/': HTTPStatus.OK,
+            '/posts/1/': HTTPStatus.OK,
+            '/profile/test/': HTTPStatus.OK,
+            '/unexisting_page/': HTTPStatus.NOT_FOUND
 
         }
 

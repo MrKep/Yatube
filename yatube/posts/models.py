@@ -12,19 +12,22 @@ class Post(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='author',
-        verbose_name='автор')
+        verbose_name='автор',
+        help_text='Автор поста')
     group = models.ForeignKey(
         'Group',
         blank=True,
         null=True,
         on_delete=models.SET_NULL,
         related_name='group',
-        verbose_name='группы')
+        verbose_name='группы',
+        help_text='Группа к которой относится пост')
 
     image = models.ImageField(
         'Картинка',
         upload_to='posts/',
-        blank=True
+        blank=True,
+        help_text='Картинка поста'
     )
 
     def __str__(self):
@@ -47,11 +50,13 @@ class Comment(models.Model):
     post = models.ForeignKey(
         Post,
         on_delete=models.CASCADE,
-        related_name='comments',)
+        related_name='comments',
+        help_text='Комментарий к посту')
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='comments',)
+        related_name='comments',
+        help_text='Автор комментария')
     text = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
 
@@ -63,8 +68,17 @@ class Follow(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='follower')
+        related_name='follower',
+        help_text='Подписчик')
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='following')
+        related_name='following',
+        help_text='Автор на которого подписываются')
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['author', 'user'],
+                name='unique_follower')
+        ]
