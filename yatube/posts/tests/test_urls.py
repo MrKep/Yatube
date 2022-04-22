@@ -8,7 +8,6 @@ from ..models import Group, Post
 User = get_user_model()
 
 
-# Проверка кеша в test_forms функция test_caching или нужно еще?
 class PostURLTests(TestCase):
     @classmethod
     def setUpClass(cls):
